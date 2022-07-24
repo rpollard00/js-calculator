@@ -1,0 +1,67 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+h1 {
+    margin: 0px;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 720px;
+    min-width: 80%;
+    height: calc(100% - 50px);
+    row-gap: 16px;
+}
+
+#display {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 45px;
+    width: 100%;
+    max-height: calc(80% / 7);
+    min-height: calc(80% / 7);
+    flex: 1 1 auto;
+    
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: calc(80% / 7);
+    min-height: fit-content;
+    flex: 1 1 auto;
+    column-gap: 16px;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    width: 25%;
+    /* height: 50px; */
+    flex: 1 1 auto;
+    height: 100%;
+    
+    background-color: lightgrey;
+    
+}
+
+#equals {
+    width: 37.5%;
+}
+
+#number0 {
+    width: 37.5%;
+}

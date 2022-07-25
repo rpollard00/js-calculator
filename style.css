@@ -53,7 +53,7 @@ h1 {
     column-gap: 16px;
 }
 
-.button {
+.keypad {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -62,7 +62,7 @@ h1 {
     /* height: 50px; */
     flex: 1 1 auto;
     height: 100%;
-    
+    box-sizing: border-box;
     background-color: mediumseagreen;
     
 }
@@ -74,3 +74,9 @@ h1 {
 #number0 {
     width: 37.5%;
 }
+
+.hover {
+    border-style: solid;
+    border-width: 4px;
+    border-color: black;
+} 

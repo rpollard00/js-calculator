@@ -77,6 +77,11 @@ function isMathematicalExpression(currentExpression) {
 function calculateExpression(currentExpression) {
     [a, operator, b] = currentExpression.split(' ');
     
+    // divide by 0
+    if (b === '0' && operator === '/') {
+        return "R U DUMB"
+    }
+
     return operate(operator, a, b);
 }
 
@@ -133,10 +138,10 @@ function updateDisplayText(text) {
     if (text.toString().length >= MAX_DISPLAY_LEN) {
         if (isNumber(text)) {
             // is a decimal
-            if (!Number.isInteger(text)) {
-                const splitText = text.split('.');
-                const decimalText = splitText[splitText.length - 1]; // get the decimal portion only
-                text = text.toFixed(decimalText); // when we max out the display length, on decimal numbers, fix the decimal position
+            if (!Number.isInteger(text)) {   
+                const splitText = text.toString().split('.');
+                const decimalText = splitText[splitText.length - 1];
+                text = Number(text.toFixed(MAX_DISPLAY_LEN - splitText[0].length - 1)); // when we max out the display length, on decimal numbers, fix the decimal position
             }
         }
     }
@@ -158,7 +163,7 @@ function runCalc(inputVal) {
         // if there's a complte expression, calculate it
         if (isMathematicalExpression(currentExpression)) {
             currentExpression = calculateExpression(currentExpression);
-            display.textContent = currentExpression;
+            updateDisplayText(currentExpression);
             currentExpression += " " + inputVal + " ";
             prevCalc = true;
         } else {
@@ -178,10 +183,18 @@ function runCalc(inputVal) {
                 currentExpression = inputVal;
                 display.textContent = currentExpression;
         } else if (hasOperator(display.textContent)) {
-            display.textContent = inputVal;
-            // if currentExpression already has an operator, it must be
-            // before the current number so add a space
-            currentExpression += " " + inputVal;
+            const lastChar = currentExpression.toString()[currentExpression.length - 1];
+            if (lastChar === '.') {
+                display.textContent = inputVal;
+                // if currentExpression already has an operator, it must be
+                // before the current number so add a space
+                currentExpression += + inputVal;
+            } else {
+                display.textContent = inputVal;
+                // if currentExpression already has an operator, it must be
+                // before the current number so add a space
+                currentExpression += " " + inputVal;
+            }
         } else if (prevCalc) { // need a flag to override default display logic if we just calculated
             display.textContent = inputVal;
             currentExpression += inputVal;
@@ -192,10 +205,14 @@ function runCalc(inputVal) {
         }    
     } else if (inputType === 'decimal') {
         // only allow one decimal point
-        if (!display.textContent.includes('.')) {
+        const lastChar = currentExpression.toString()[currentExpression.length - 1];
+        if (lastChar in calc && !display.textContent.includes('.')) {
+            display.textContent += ' 0.';
+            currentExpression += ' 0.';
+        } else if (!display.textContent.includes('.')) {
             display.textContent += '.';
             currentExpression += inputVal;
-        }
+        } 
     } else if (inputType === 'special') {
         if (inputVal == 'C') {
             // clear everything
@@ -208,27 +225,26 @@ function runCalc(inputVal) {
         }
     } else if (inputType === 'compute' && isMathematicalExpression(currentExpression)) {
         // if there are 2 numeric values and an operator
-        console.log(inputType);
         currentExpression = calculateExpression(currentExpression);
-        display.textContent = currentExpression;
+        updateDisplayText(currentExpression);
     }
 
-    console.log(`Current Expression ${currentExpression}`);
+    //console.log(`Current Expression ${currentExpression}`);
 }
 
-const MAX_DISPLAY_LEN = 21;
+const MAX_DISPLAY_LEN = 12;
 let prevCalc = false; // flag for display logic
 const display = document.querySelector("#display");
 display.textContent = "";
-let expression = "";
 const container = document.querySelector('#container');
 const keypad = document.querySelectorAll('.keypad');
 
+// Init expression
 let currentExpression = "";
-console.log(keypad);
 
+
+// Event Listeners
 keypad.forEach(key => key.addEventListener('click', () => clickEvent(key)));
-
 keypad.forEach(key => key.addEventListener('mouseover', () => addClass(key,'hover')));
 keypad.forEach(key => key.addEventListener('mouseout', () => removeClass(key,'hover')));
 

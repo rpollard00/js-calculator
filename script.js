@@ -57,33 +57,98 @@ function removeClass(key, className) {
     key.classList.remove(className);
 };
 
+function clickEvent(key) {
+    runCalc(key.textContent);
+}
+
+
+// returns the type of input e.g number, decimal, operator, special
+function getInputType(inputVal) {
+    if (Number(inputVal) || inputVal === "0") {
+        return 'number';
+    } else if (inputVal === ".") {
+        return 'decimal';
+    } else if (inputVal in calc) {
+        //inputVal === '+' || inputVal === '-' || inputVal === '*' || inputVal === '/') {
+        return 'operator';
+    } else if (inputVal === 'CE' || inputVal === 'C') {
+        return 'special';
+    }
+
+    return 'compute';
+}
+
+function hasOperator(text) {
+    const operators = Object.keys(calc);
+    const textArray = text.split('');
+    const found = textArray.some(val => operators.includes(val));
+    if (found) {
+        return true;
+    }
+
+    return false;
+}
+
+function disableKey(key_id) {
+    keypad.forEach(key => {
+        if (key.id === key_id) {
+            key.removeEventListener('click', () => clickEvent(key));
+          //  key.removeEventListener('mouseover');
+          //  key.removeEventListener('mouseout');
+           // key.classList.includes('hover') ? key.removeClass('hover') : null;
+        }
+        else {
+            return false;
+        }
+    });
+
+    return true;
+}
+
 function runCalc(inputVal) {
     // if charater is a number then append display
     console.log('Text content: ' + display.textContent);
-    console.log('Number(text): ' + Number(inputVal));
-    if (Number(inputVal)) {
-        
-        if ((display.textContent) === "" && (Number(inputVal) === 0)) {
-            console.log("Do nothing");
+    console.log('Number(text): ' + inputVal);
+    let inputType = getInputType(inputVal);
+
+    if (inputType === 'operator') {
+        display.textContent = inputVal;
+    } else if (inputType === 'number') {
+        if (display.textContent.toString() === '0') {
+            display.textContent = "0";
+        } else if (hasOperator(display.textContent)) {
+            display.textContent = inputVal;
+        } else {
+            display.textContent += inputVal;
+        }    
+    } else if (inputType === 'decimal') {
+        // only allow one decimal point
+        if (!display.textContent.includes('.')) {
+            display.textContent += '.';
         }
-        else {
-            display.textContent += inputVal.toString();
+    } else if (inputType === 'special') {
+        if (inputVal == 'C') {
+            // clear everything
+            display.textContent = '';
+            // clear where the current expression is being stored
         }
-    } else {
-        display.textContent = inputVal.toString();
+    } else if (inputType === 'compute') {
+        console.log(inputType);
     }
-    // if character is an operator then refresh display
+
 }
 
 const display = document.querySelector("#display");
 display.textContent = "";
+let expression = "";
 const container = document.querySelector('#container');
 const keypad = document.querySelectorAll('.keypad');
+
+let currentExpression = "";
 console.log(keypad);
 
-keypad.forEach(key => key.addEventListener('click', () => {
-    runCalc(key.textContent);
-}));
+keypad.forEach(key => key.addEventListener('click', () => clickEvent(key)));
 
 keypad.forEach(key => key.addEventListener('mouseover', () => addClass(key,'hover')));
 keypad.forEach(key => key.addEventListener('mouseout', () => removeClass(key,'hover')));
+

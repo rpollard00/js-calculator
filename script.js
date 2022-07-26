@@ -207,7 +207,7 @@ function runCalc(inputVal) {
         // only allow one decimal point
         const lastChar = currentExpression.toString()[currentExpression.length - 1];
         if (lastChar in calc && !display.textContent.includes('.')) {
-            display.textContent += ' 0.';
+            display.textContent = ' 0.';
             currentExpression += ' 0.';
         } else if (!display.textContent.includes('.')) {
             display.textContent += '.';
